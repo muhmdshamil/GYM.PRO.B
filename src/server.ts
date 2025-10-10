@@ -19,13 +19,26 @@ dotenv.config();
 
 const app = express();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
-console.log('Using FRONTEND_URL:', FRONTEND_URL) // optional: check logs
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173').trim();
 
-app.use(cors({
-  origin: FRONTEND_URL,
-  credentials: true
-}))
+console.log('Using FRONTEND_URL:', FRONTEND_URL);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (like Postman or mobile apps)
+      if (!origin) return callback(null, true);
+
+      if (origin === FRONTEND_URL) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
+
 
 app.use(helmet());
 app.use(morgan('dev'));
