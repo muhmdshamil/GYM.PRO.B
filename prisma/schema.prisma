@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Stores website contact form submissions
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  createdAt DateTime @default(now())
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  OWNER
+  TRAINER
+}
+
+// Membership plan enum for user subscriptions
+enum MembershipPlan {
+  PREMIUM
+  GOLD
+  SILVER
+}
+
+
+model User{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  role Role @default(USER)
+  heightCm Int?
+  weightKg Float?
+  place String?
+  bio String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trainer   Trainer? @relation(fields: [trainerId], references: [id])
+  trainerId String?
+
+  // Many-to-many trainers (new)
+  userTrainers UserTrainer[]
+
+  // Membership fields
+  membershipPlan       MembershipPlan?
+  planStartsAt         DateTime?
+  planEndsAt           DateTime?
+  trainersLimit        Int?
+  freeProductsPerMonth Int?
+  
+  // Shop relations
+  cartItems CartItem[]
+  orders    Order[]
+}
+
+model Trainer {
+  id              String   @id @default(uuid())
+  name            String
+  qualification   String
+  imageUrl        String?
+  championDetails String?
+  email           String?  @unique
+  password        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  users User[]
+  // Many-to-many users (new)
+  trainerUsers UserTrainer[]
+}
+
+// Enums for Shop feature
+enum PaymentMethod {
+  COD
+  UPI
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  imageUrl    String?
+  price       Decimal  @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
+}
+
+// Dedicated table for membership plans
+model Plan {
+  id                String          @id @default(uuid())
+  name              String
+  description       String?
+  imageUrl          String?
+  price             Decimal         @db.Decimal(10, 2)
+  membershipPlan    MembershipPlan?
+  planDurationDays  Int?
+  planTrainersLimit Int?
+  planFreeProducts  Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  userId    String
+  productId String
+  quantity  Int     @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model Order {
+  id            String        @id @default(uuid())
+  userId        String
+  paymentMethod PaymentMethod
+  status        OrderStatus   @default(PENDING)
+  total         Decimal       @db.Decimal(10, 2)
+  createdAt     DateTime      @default(now())
+
+  user   User        @relation(fields: [userId], references: [id])
+  items  OrderItem[]
+}
+
+model OrderItem {
+  id               String   @id @default(uuid())
+  orderId          String
+  productId        String
+  quantity         Int
+  priceAtPurchase  Decimal  @db.Decimal(10, 2)
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+// Join table for many-to-many relation between User and Trainer
+model UserTrainer {
+  id        String   @id @default(uuid())
+  userId    String
+  trainerId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  trainer Trainer @relation(fields: [trainerId], references: [id])
+
+  @@unique([userId, trainerId])
+}

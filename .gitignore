@@ -1,0 +1,74 @@
+# ------------------------------------
+# 1. DEPENDENCIES
+# ------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# ------------------------------------
+# 2. ENVIRONMENT & SECRETS
+# ------------------------------------
+# Never commit environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ------------------------------------
+# 3. BUILD & OUTPUT FILES
+# ------------------------------------
+dist/
+build/
+coverage/
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# ------------------------------------
+# 4. DATABASE & BACKUPS
+# ------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.dump
+
+# If you export Postgres dumps, ignore them too
+*.bak
+*.backup
+
+# ------------------------------------
+# 5. OS & EDITOR FILES
+# ------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# ------------------------------------
+# 6. TESTS & MISC
+# ------------------------------------
+/coverage
+/.nyc_output
+jest-html-reporters-*.html
