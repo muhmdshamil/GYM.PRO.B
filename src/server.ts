@@ -12,6 +12,7 @@ import shopRoutes from './routes/shop.js';
 import trainerPortalRoutes from './routes/trainerPortal.js';
 import membershipRoutes from './routes/membership.js';
 import contactRoutes from './routes/contact.js';
+import adminRoutes from './routes/admin.js';
 import { connectDB } from './connection/db.js';
 
 
@@ -19,7 +20,7 @@ dotenv.config();
 
 const app = express();
 
-const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173').trim();
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5174').trim();
 
 console.log('Using FRONTEND_URL:', FRONTEND_URL);
 
@@ -53,6 +54,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/membership', membershipRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 

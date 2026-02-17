@@ -21,6 +21,7 @@ enum Role {
   USER
   OWNER
   TRAINER
+  ADMIN
 }
 
 // Membership plan enum for user subscriptions
